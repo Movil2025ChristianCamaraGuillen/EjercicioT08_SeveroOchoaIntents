@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -187,10 +188,10 @@ fun IESSeveroOchoaIntents() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 5. ABRIR CÁMARA
+            // 5. Calcular distancia al instituto -- Para trabajar el tema de los permisos
             ActionButton(
-                text = "Hacer Foto",
-                icon = Icons.Filled.CameraAlt,
+                text = "Calcula distancia al Instituto",
+                icon = Icons.Filled.Route,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
             ) {
 
