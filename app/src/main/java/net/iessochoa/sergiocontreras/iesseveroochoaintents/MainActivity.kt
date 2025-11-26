@@ -101,6 +101,8 @@ fun IESSeveroOchoaIntents() {
                 contentDescription = "Entrada del IES Severo Ochoa"
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 text = "Acciones Rápidas",
                 fontSize = 24.sp,
@@ -114,10 +116,10 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Language,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                // Cambia esta URL por la de tu instituto
-                val url = "https://www.google.com"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
+
+
+
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -128,11 +130,9 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Phone,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
-                // ACTION_DIAL es mejor que CALL porque no requiere pedir permisos
-                // simplemente abre el marcador con el número listo.
-                val numero = "912345678"
-                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$numero"))
-                context.startActivity(intent)
+
+
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -142,22 +142,12 @@ fun IESSeveroOchoaIntents() {
                 text = "Ver en Google Maps",
                 icon = Icons.Filled.Map,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-            ) {
-                // "geo:0,0?q=" permite buscar por nombre o dirección
-                val ubicacion = "Instituto de Educación Secundaria" // Pon aquí el nombre real o dirección
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$ubicacion"))
-                // Opcional: forzar que se abra en Google Maps
-                intent.setPackage("com.google.android.apps.maps")
+            )   {
 
-                // Comprobamos si hay app de mapas instalada para evitar cierres
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(intent)
-                } else {
-                    // Fallback: abrir en navegador si no hay maps instalado
-                    val intentWeb = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=$ubicacion"))
-                    context.startActivity(intentWeb)
+
+
                 }
-            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -167,15 +157,9 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Email,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                val email = "info@instituto.com"
-                val asunto = "Consulta desde la App"
 
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:") // Solo apps de correo
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-                    putExtra(Intent.EXTRA_SUBJECT, asunto)
-                }
-                context.startActivity(intent)
+
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -186,12 +170,13 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.CameraAlt,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
             ) {
-                // Lanzamos el contrato de la cámara definido arriba
-                cameraLauncher.launch(null)
+
+
             }
-        }
+            }
     }
 }
+
 
 // Componente reutilizable para los botones (para no repetir código visual)
 @Composable
