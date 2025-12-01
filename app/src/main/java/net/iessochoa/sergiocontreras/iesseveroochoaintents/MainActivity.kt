@@ -1,14 +1,9 @@
 package net.iessochoa.sergiocontreras.iesseveroochoaintents
 
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.iessochoa.sergiocontreras.iesseveroochoaintents.ui.theme.IESSeveroOchoaIntentsTheme
-import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,36 +65,30 @@ class MainActivity : ComponentActivity() {
 fun IESSeveroOchoaIntents() {
 
     val context = LocalContext.current
-
-    // Launcher especial para la cámara en Compose
-    // (En este ejemplo solo abre la cámara y captura la miniatura, no guardamos la foto)
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview()
-    ) { bitmap ->
-        // Aquí recibirías la foto (bitmap) si quisieras mostrarla
-        // Por ahora no hacemos nada, solo cumplimos el objetivo de abrirla
-    }
-
+    // Helper de Compose que facilita abrir URIs básicas (http, tel, etc.)
     val uriHandler = LocalUriHandler.current
-    val url = "https://portal.edu.gva.es/03013224/"
+
+    // --- DATOS DEL INSTITUTO ---
+    val webUrl = "https://portal.edu.gva.es/03013224/"
     val phoneNumber = "+34966912260"
     val address = "IES Severo Ochoa, Elche"
 
-    val latitude = "38.27532"
-    val longitude = "-0.68652"
+    // Coordenadas exactas
+    val latitude = "38.2794548"
+    val longitude = "-0.7180523"
+    val mapZoom = "16.5"
+    val mapLabel = "IES Severo Ochoa" // Etiqueta para el marcador
 
-    // 2. Opcional: Añade una etiqueta al marcador usando el parámetro 'q'.
-    // El formato es geo:lat,lng?q=Mi Etiqueta
-    val label = "IES Severo Ochoa"
-    val geoUriWithLabel = "geo:$latitude,$longitude?q=$label"
+    val emailRecipient = "info@iesseveroochoa.edu.es"
+    val emailSubject = "Consulta desde la App"
+    val emailBody = "Hola, me gustaría recibir información sobre..."
 
-    val recipient = "info@iesseveroochoa.edu.es"
-    val subject = "Consulta desde la App"
-    val body = "Hola, me gustaría recibir información sobre..."
 
-    // 2. Codifica los componentes para que sean seguros en un URI.
-    val encodedSubject = URLEncoder.encode(subject, "UTF-8")
-    val encodedBody = URLEncoder.encode(body, "UTF-8")
+    // --- 5. CONFIGURACIÓN DE PERMISOS (Hacer al final) ---
+    // TODO: Paso 5. Crear el permissionLauncher.
+    // Debe usar ActivityResultContracts.RequestMultiplePermissions()
+    // Si se conceden los permisos -> llamar a calculateAndShowDistance()
+    // Si se deniegan -> mostrar un Toast informativo
 
 
     Scaffold(
@@ -144,7 +132,7 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Language,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                uriHandler.openUri(url)
+                // TODO: Paso 1. Abrir la URL del instituto usando uriHandler
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -155,7 +143,8 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Phone,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
-                uriHandler.openUri("tel:$phoneNumber")
+                // TODO: Paso 2. Abrir el marcador telefónico.
+                // Recuerda el esquema "tel:"
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -166,11 +155,11 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Map,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
             )   {
-                    val encodedAddress = URLEncoder.encode(address, "UTF-8")
-                    val geoUri = "geo:0,0?q=$encodedAddress"
-                    uriHandler.openUri(geoUri)
-                    //uriHandler.openUri(geoUriWithLabel)
-                }
+                // TODO: Paso 3. Construir la geoURI compleja.
+                // Formato: "geo:0,0?q=lat,lng(label)&z=zoom"
+                // IMPORTANTE: Recuerda codificar la etiqueta (label) con URLEncoder para caracteres especiales.
+
+            }
 
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -181,20 +170,21 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Email,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                val mailtoUri = "mailto:$recipient?subject=$encodedSubject&body=$encodedBody"
-                uriHandler.openUri(mailtoUri)
+                // TODO: Paso 4. Construir la URI mailto.
+                // Formato: "mailto:email?subject=...&body=..."
+                // IMPORTANTE: Codificar asunto y cuerpo con URLEncoder.
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 5. Calcular distancia al instituto -- Para trabajar el tema de los permisos
+            // 5. Calcular distancia al instituto
             ActionButton(
                 text = "Calcula distancia al Instituto",
                 icon = Icons.Filled.Route,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
             ) {
-
-
+                // TODO: Paso 5 (Botón). Lanzar el permissionLauncher solicitando:
+                // Manifest.permission.ACCESS_FINE_LOCATION y ACCESS_COARSE_LOCATION
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -205,33 +195,29 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Whatsapp,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer, contentColor = MaterialTheme.colorScheme.onTertiaryContainer)
             ) {
-                sendWhatsAppMessage(context, "Me gustaría matricularme en vuestros ciclos")
-
-
+                sendWhatsAppMessage(
+                    context,
+                    phoneNumber,
+                    "Me gustaría matricularme en vuestros ciclos"
+                )
             }
 
         }
     }
 }
 
-fun sendWhatsAppMessage(context: Context, message: String) {
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        setPackage("com.whatsapp") // Forzamos WhatsApp normal
-        putExtra(Intent.EXTRA_TEXT, message)
-    }
-
-    try {
-        context.startActivity(intent)
-    } catch (e: ActivityNotFoundException) {
-        // Aquí capturamos si NO tiene WhatsApp instalado
-        // Opcional: Podrías intentar con WhatsApp Business aquí si falla el normal
-        Toast.makeText(context, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
-    }
+fun sendWhatsAppMessage(context: Context, phoneNumber: String, message: String) {
+    // TODO: Paso 6. Implementar lógica de WhatsApp
+    // 1. Formatear número (quitar espacios y +).
+    // 2. Codificar mensaje con URLEncoder.
+    // 3. Crear URI "https://wa.me/..."
+    // 4. Crear Intent ACTION_VIEW.
+    // 5. Configurar package "com.whatsapp" (opcional, para forzar app).
+    // 6. Lanzar activity dentro de un try-catch para evitar cierres si no está instalado.
 }
 
 
-// Componente reutilizable para los botones (para no repetir código visual)
+// Componente reutilizable para los botones
 @Composable
 fun ActionButton(
     text: String,
@@ -251,6 +237,16 @@ fun ActionButton(
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text, fontSize = 18.sp)
     }
+}
+
+// NUEVA FUNCIÓN para obtener ubicación y calcular distancia
+private fun calculateAndShowDistance(context: Context, instituteLat: String, instituteLon: String) {
+    // TODO: Paso 7. Lógica de Geolocalización (API LocationServices)
+
+    // 1. Obtener FusedLocationProviderClient (Necesitarás añadir dependencia en Gradle y el import).
+    // 2. Verificar permiso selfPermission (aunque ya lo hayamos pedido, es buena práctica).
+    // 3. Obtener ubicación actual (getCurrentLocation) con prioridad alta.
+    // 4. En el listener de éxito: crear objeto Location del instituto, calcular distancia (distanceTo) y mostrar Toast.
 }
 
 @Preview(showBackground = true)
