@@ -1,12 +1,15 @@
 package net.iessochoa.sergiocontreras.iesseveroochoaintents
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -89,10 +92,26 @@ fun IESSeveroOchoaIntents() {
 
 
     // --- 5. CONFIGURACIÓN DE PERMISOS (Hacer al final) ---
-    // TODO: Paso 5. Crear el permissionLauncher.
+    // Crear el permissionLauncher.
     // Debe usar ActivityResultContracts.RequestMultiplePermissions()
     // Si se conceden los permisos -> llamar a calculateAndShowDistance()
     // Si se deniegan -> mostrar un Toast informativo
+    // Preparamos el escuchador de permisos
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        // Este código se ejecuta CUANDO el usuario responde al diálogo
+        val isGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+        if (isGranted) {
+            Toast.makeText(context, "Permiso concedido. Calculando...", Toast.LENGTH_SHORT).show()
+            // ¡Llamamos a la función que calcula!
+            calculateAndShowDistance(context, latitude, longitude)
+        } else {
+            Toast.makeText(context, "Se necesita permiso para calcular la distancia", Toast.LENGTH_LONG).show()
+        }
+    }
 
 
     Scaffold(
