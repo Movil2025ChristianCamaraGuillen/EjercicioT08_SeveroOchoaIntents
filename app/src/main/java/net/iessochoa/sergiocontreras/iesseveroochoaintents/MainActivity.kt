@@ -133,6 +133,7 @@ fun IESSeveroOchoaIntents() {
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 // TODO: Paso 1. Abrir la URL del instituto usando uriHandler
+                uriHandler.openUri(webUrl)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
