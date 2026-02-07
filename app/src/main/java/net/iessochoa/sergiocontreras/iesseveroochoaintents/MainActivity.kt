@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.iessochoa.sergiocontreras.iesseveroochoaintents.ui.theme.IESSeveroOchoaIntentsTheme
+import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,9 +157,15 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Map,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
             )   {
-                // TODO: Paso 3. Construir la geoURI compleja.
-                // Formato: "geo:0,0?q=lat,lng(label)&z=zoom"
-                // IMPORTANTE: Recuerda codificar la etiqueta (label) con URLEncoder para caracteres especiales.
+                // Construir la geoURI compleja.
+                // 1. Codificamos el nombre para que sea seguro (los espacios se convierten en %20, etc.)
+                val encodedLabel = URLEncoder.encode(mapLabel, "UTF-8")
+
+                // 2. Construimos la URI compleja concatenando las variables
+                val geoUri = "geo:0,0?q=$latitude,$longitude($encodedLabel)&z=$mapZoom"
+
+                // 3. Lanzamos
+                uriHandler.openUri(geoUri)
 
             }
 
