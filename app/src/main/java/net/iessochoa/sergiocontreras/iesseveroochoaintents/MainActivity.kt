@@ -219,8 +219,13 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Route,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
             ) {
-                // TODO: Paso 5 (Botón). Lanzar el permissionLauncher solicitando:
-                // Manifest.permission.ACCESS_FINE_LOCATION y ACCESS_COARSE_LOCATION
+                // (Botón). Lanzar el permissionLauncher solicitando:
+                permissionLauncher.launch( // <--- ¡A trabajar!
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
