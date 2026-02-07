@@ -1,7 +1,10 @@
 package net.iessochoa.sergiocontreras.iesseveroochoaintents
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -221,13 +224,31 @@ fun IESSeveroOchoaIntents() {
 }
 
 fun sendWhatsAppMessage(context: Context, phoneNumber: String, message: String) {
-    // TODO: Paso 6. Implementar lógica de WhatsApp
-    // 1. Formatear número (quitar espacios y +).
-    // 2. Codificar mensaje con URLEncoder.
-    // 3. Crear URI "https://wa.me/..."
-    // 4. Crear Intent ACTION_VIEW.
-    // 5. Configurar package "com.whatsapp" (opcional, para forzar app).
-    // 6. Lanzar activity dentro de un try-catch para evitar cierres si no está instalado.
+    // Implementar lógica de WhatsApp
+    // 1. Limpieza: WhatsApp quiere el número sin '+' ni espacios (ej: 34666...)
+    val cleanNumber = phoneNumber.replace("+", "").replace(" ", "")
+
+    // 2. Codificamos el mensaje
+    val encodedMessage = URLEncoder.encode(message, "UTF-8")
+
+    // 3. Creamos la URI "mágica" de WhatsApp
+    val uri = "https://wa.me/$cleanNumber?text=$encodedMessage"
+
+    // 4. Creamos un Intent nativo ACTION_VIEW
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = android.net.Uri.parse(uri)
+
+    /* TRUCO PRO: Si descomentas la siguiente línea, obligas a abrir WhatsApp oficial.
+       Si la dejas comentada, Android preguntará al usuario (útil si usa WhatsApp Business) */
+    // intent.setPackage("com.whatsapp")
+
+    // 5. INTENTAMOS abrir la actividad
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        // Si entramos aquí, es que no tiene WhatsApp instalado
+        Toast.makeText(context, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
+    }
 }
 
 
