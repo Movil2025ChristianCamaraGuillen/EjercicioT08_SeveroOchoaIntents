@@ -178,9 +178,15 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Email,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                // TODO: Paso 4. Construir la URI mailto.
-                // Formato: "mailto:email?subject=...&body=..."
-                // IMPORTANTE: Codificar asunto y cuerpo con URLEncoder.
+                // Construir la URI mailto.
+                // Codificamos asunto y cuerpo
+                val encodedSubject = URLEncoder.encode(emailSubject, "UTF-8")
+                val encodedBody = URLEncoder.encode(emailBody, "UTF-8")
+
+                // Construimos la URI
+                val mailtoUri = "mailto:$emailRecipient?subject=$encodedSubject&body=$encodedBody"
+
+                uriHandler.openUri(mailtoUri)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
