@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -48,8 +50,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import net.iessochoa.sergiocontreras.iesseveroochoaintents.ui.theme.IESSeveroOchoaIntentsTheme
 import java.net.URLEncoder
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -300,12 +307,41 @@ fun ActionButton(
 
 // NUEVA FUNCIÓN para obtener ubicación y calcular distancia
 private fun calculateAndShowDistance(context: Context, instituteLat: String, instituteLon: String) {
-    // TODO: Paso 7. Lógica de Geolocalización (API LocationServices)
+    // Lógica de Geolocalización (API LocationServices)
 
-    // 1. Obtener FusedLocationProviderClient (Necesitarás añadir dependencia en Gradle y el import).
-    // 2. Verificar permiso selfPermission (aunque ya lo hayamos pedido, es buena práctica).
-    // 3. Obtener ubicación actual (getCurrentLocation) con prioridad alta.
-    // 4. En el listener de éxito: crear objeto Location del instituto, calcular distancia (distanceTo) y mostrar Toast.
+    // 1. Obtenemos el cliente de ubicación de Google
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    // 2. IMPORTANTE: Aunque el usuario haya dicho "Sí" antes,
+    // Android exige por seguridad volver a verificar el permiso antes de llamar a la API.
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+        // 3. Pedimos la ubicación ACTUAL
+        // PRIORITY_HIGH_ACCURACY: Usa GPS (gasta más batería, pero es exacto)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { userLocation: Location? ->
+                if (userLocation != null) {
+                    // A. Creamos la ubicación del Instituto
+                    val instituteLocation = Location("provider").apply {
+                        latitude = instituteLat.toDouble()
+                        longitude = instituteLon.toDouble()
+                    }
+
+                    // B. Calculamos la distancia (magia matemática de Android)
+                    val distanceInMeters = userLocation.distanceTo(instituteLocation)
+                    val distanceInKm = distanceInMeters / 1000f
+
+                    // C. Mostramos resultado
+                    val msg = String.format(Locale.getDefault(), "Estás a %.2f km del instituto", distanceInKm)
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "No se pudo obtener la ubicación (GPS desactivado?)", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Error al obtener ubicación", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
 
 @Preview(showBackground = true)
