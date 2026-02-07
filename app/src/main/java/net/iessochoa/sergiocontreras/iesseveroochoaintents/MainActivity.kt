@@ -132,7 +132,7 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Language,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                // TODO: Paso 1. Abrir la URL del instituto usando uriHandler
+                // Abrir la URL del instituto usando uriHandler
                 uriHandler.openUri(webUrl)
             }
 
@@ -144,8 +144,8 @@ fun IESSeveroOchoaIntents() {
                 icon = Icons.Filled.Phone,
                 color = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
-                // TODO: Paso 2. Abrir el marcador telefónico.
-                // Recuerda el esquema "tel:"
+                // Abrir el marcador telefónico.
+                uriHandler.openUri("tel:$phoneNumber")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
